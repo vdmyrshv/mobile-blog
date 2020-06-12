@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
 import {
 	StyleSheet,
 	Text,
@@ -13,8 +13,8 @@ import { EvilIcons, Feather } from "@expo/vector-icons"
 
 import { Context as BlogContext } from "../context/BlogContext" //when importing using ES6 import, aliasing is with 'as' keyword, not destructuring colon
 
-const IndexScreen = ({ navigation: { navigate } }) => {
-	const { state, addBlogPost, deleteBlogPost } = useContext(BlogContext)
+const IndexScreen = ({ navigation: { navigate }, navigation }) => {
+	const { state, deleteBlogPost, getBlogPosts } = useContext(BlogContext)
 
 	const handleDelete = (id) => {
 		deleteBlogPost(id)
@@ -23,6 +23,15 @@ const IndexScreen = ({ navigation: { navigate } }) => {
 	const handleNavigation = (id) => {
 		navigate("Show", { id })
 	}
+
+	useEffect(() => {
+		getBlogPosts()
+		const listener = navigation.addListener('didFocus', ()=>{
+			getBlogPosts()
+		})
+
+		return () => listener.remove()
+	}, [])
 
 	return (
 		<View>
